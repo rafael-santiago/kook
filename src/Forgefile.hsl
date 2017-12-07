@@ -1,0 +1,32 @@
+#
+#                                Copyright (C) 2017 by Rafael Santiago
+#
+# This is a free software. You can redistribute it and/or modify under
+# the terms of the GNU General Public License version 2.
+#
+#
+
+include on linux ~/toolsets/linux/linux-module.hsl
+include on freebsd ~/toolsets/freebsd/freebsd-module.hsl
+
+local var includes type list;
+local var cflags type list;
+local var libraries type list;
+local var ldflags type list;
+
+local var toolset_name type string;
+
+krooked-test.preloading() {
+    if (hefesto.sys.os_name() == "linux") {
+        $toolset_name = "linux-lkm";
+    } else if (hefesto.sys.os_name() == "freebsd") {
+        $toolset_name = "freebsd-kld";
+    }
+}
+
+project krooked-test : toolset $toolset_name : "main.c", $includes, $cflags, $libraries, $ldflags, "krooked-test";
+
+krooked-test.prologue() {
+    $includes.add_item(hefesto.sys.pwd());
+    $includes.add_item(hefesto.sys.make_path(hefesto.sys.pwd(), hefesto.sys.os_name()));
+}
