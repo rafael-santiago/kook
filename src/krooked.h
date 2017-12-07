@@ -10,6 +10,7 @@
 
 #if defined(__linux__)
 #include <linux/get_syscall_table_addr.h>
+#include <linux/page_utils.h>
 #include <linux/kernel.h>
 
 typedef unsigned long ** krooked_syscall_table_t;

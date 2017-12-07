@@ -25,7 +25,15 @@ int krooked_syscall_hook(const int syscall_nr, void *new_addr, void *old_addr) {
         old_addr = (void *) g_krooked_syscall_table[syscall_nr];
     }
 
+#if defined(__linux__)
+    krooked_set_page_rd_wr(**g_krooked_syscall_table);
+#endif
+
     g_krooked_syscall_table[syscall_nr] = new_addr;
+
+#if defined(__linux__)
+    krooked_set_page_rd(**g_krooked_syscall_table);
+#endif
 
     return 1;
 }
