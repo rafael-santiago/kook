@@ -11,7 +11,7 @@ static int g_krooked_syscall_table_init_done = 0;
 
 static krooked_syscall_table_t g_krooked_syscall_table;
 
-int krooked_syscall_hook(const int syscall_nr, void *new_addr, void *old_addr) {
+int krooked_syscall_hook(const int syscall_nr, void *new_addr, void **old_addr) {
     if (!g_krooked_syscall_table_init_done) {
         g_krooked_syscall_table = get_syscall_table_addr();
         g_krooked_syscall_table_init_done = (g_krooked_syscall_table != NULL);
@@ -22,7 +22,7 @@ int krooked_syscall_hook(const int syscall_nr, void *new_addr, void *old_addr) {
     }
 
     if (old_addr != NULL) {
-        old_addr = (void *) g_krooked_syscall_table[syscall_nr];
+        (*old_addr) = (void *) g_krooked_syscall_table[syscall_nr];
     }
 
 #if defined(__linux__)

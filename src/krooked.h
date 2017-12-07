@@ -17,6 +17,6 @@ typedef unsigned long ** krooked_syscall_table_t;
 
 #endif
 
-int krooked_syscall_hook(const int syscall_nr, void *new_addr, void *old_addr);
+int krooked_syscall_hook(const int syscall_nr, void *new_addr, void **old_addr);
 
 #endif
