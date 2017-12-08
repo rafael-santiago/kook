@@ -5,8 +5,8 @@
  * the terms of the GNU General Public License version 2.
  *
  */
-#ifndef KOOK_LINUX_GET_SYSCALL_TABLE_H
-#define KOOK_LINUX_GET_SYSCALL_TABLE_H 1
+#ifndef KOOK_FREEBSD_GET_SYSCALL_TABLE_H
+#define KOOK_FREEBSD_GET_SYSCALL_TABLE_H 1
 
 void *get_syscall_table_addr(void);
 

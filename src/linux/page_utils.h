@@ -5,11 +5,11 @@
  * the terms of the GNU General Public License version 2.
  *
  */
-#ifndef KROOKED_LINUX_PAGE_UTILS_H
-#define KROOKED_LINUX_PAGE_UTILS_H 1
+#ifndef KOOK_LINUX_PAGE_UTILS_H
+#define KOOK_LINUX_PAGE_UTILS_H 1
 
-void krooked_set_page_rd_wr(unsigned long address);
+void kook_set_page_rd_wr(unsigned long address);
 
-void krooked_set_page_rd(unsigned long address);
+void kook_set_page_rd(unsigned long address);
 
 #endif

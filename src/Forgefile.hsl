@@ -16,7 +16,7 @@ local var ldflags type list;
 
 local var toolset_name type string;
 
-krooked-test.preloading() {
+kook-test.preloading() {
     if (hefesto.sys.os_name() == "linux") {
         $toolset_name = "linux-lkm";
     } else if (hefesto.sys.os_name() == "freebsd") {
@@ -24,7 +24,7 @@ krooked-test.preloading() {
     }
 }
 
-project krooked-test : toolset $toolset_name : "main.c", $includes, $cflags, $libraries, $ldflags, "krooked-test";
+project kook-test : toolset $toolset_name : "main.c", $includes, $cflags, $libraries, $ldflags, "kook-test";
 
 krooked-test.prologue() {
     $includes.add_item(hefesto.sys.pwd());

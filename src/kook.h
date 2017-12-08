@@ -5,18 +5,24 @@
  * the terms of the GNU General Public License version 2.
  *
  */
-#ifndef KROOKED_H
-#define KROOKED_H 1
+#ifndef KOOK_H
+#define KOOK_H 1
 
 #if defined(__linux__)
 #include <linux/get_syscall_table_addr.h>
 #include <linux/page_utils.h>
 #include <linux/kernel.h>
 
-typedef unsigned long ** krooked_syscall_table_t;
+typedef unsigned long ** kook_syscall_table_t;
+
+#elif defined(__FreeBSD__)
+#include <freebsd/get_syscall_table_addr.h>
+#include <sys/sysent.h>
+
+typedef struct sysent * kook_syscall_table_t;
 
 #endif
 
-int krooked_syscall_hook(const int syscall_nr, void *new_addr, void **old_addr);
+int kook(const int syscall_nr, void *new_addr, void **old_addr);
 
 #endif

@@ -3,3 +3,9 @@
 *.cmd
 src/.tmp_versions/*
 *.ko
+export_syms
+machine
+src/x86
+*.kld
+
+
