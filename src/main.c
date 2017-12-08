@@ -39,8 +39,7 @@ static void close_file(const int fd) {
 }
 
 static int file_exists(void) {
-    int error = kern_openat(curthread, AT_FDCWD, KOOK_TEST_FILE_PATH, UIO_SYSSPACE, O_RDONLY, 0644);
-    int exists = (error == 0);
+    int exists = (kern_openat(curthread, AT_FDCWD, KOOK_TEST_FILE_PATH, UIO_SYSSPACE, O_RDONLY, 0644) == 0);
 
     if (exists) {
         kern_close(curthread, curthread->td_retval[0]);
