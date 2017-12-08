@@ -5,62 +5,26 @@
  * the terms of the GNU General Public License version 2.
  *
  */
+#include <cutest/src/kutest.h>
 #include <kook.h>
 
-#if defined(__linux__)
+KUTE_DECLARE_TEST_CASE(kook_test_monkey);
 
-#include <linux/init.h>
-#include <linux/module.h>
+KUTE_DECLARE_TEST_CASE(hook_test);
 
-MODULE_LICENSE("GPL");
+KUTE_DECLARE_TEST_CASE(unhook_test);
 
-MODULE_AUTHOR("Rafael Santiago");
+KUTE_TEST_CASE(hook_test)
+    // TODO(Rafael): Guess what?
+KUTE_TEST_CASE_END
 
-MODULE_DESCRIPTION("Just a test for this stuff");
+KUTE_TEST_CASE(unhook_test)
+    // TODO(Rafael): Guess what?
+KUTE_TEST_CASE_END
 
-MODULE_VERSION("0.0.0");
+KUTE_TEST_CASE(kook_test_monkey)
+    KUTE_RUN_TEST(hook_test);
+    KUTE_RUN_TEST(unhook_test);
+KUTE_TEST_CASE_END
 
-static int __init ini(void) {
-    return 0;
-}
-
-static void __exit finis(void) {
-}
-
-module_init(ini);
-module_exit(finis);
-
-#elif defined(__FreeBSD__)
-
-#include <kook.h>
-#include <sys/module.h>
-#include <sys/kernel.h>
-#include <sys/systm.h>
-
-static int ld(struct module *mod, int cmd, void *arg) {
-    int error = 0;
-
-    switch(cmd) {
-        case MOD_LOAD:
-            break;
-
-        case MOD_UNLOAD:
-            break;
-
-        default:
-            error = EOPNOTSUPP;
-            break;
-    }
-
-    return error;
-}
-
-static moduledata_t test_mod = {
-    "kook-test",
-    ld,
-    NULL
-};
-
-DECLARE_MODULE(kook, test_mod, SI_SUB_DRIVERS, SI_ORDER_MIDDLE);
-
-#endif
+KUTE_MAIN(kook_test_monkey);

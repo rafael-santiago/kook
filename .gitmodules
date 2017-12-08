@@ -1,0 +1,3 @@
+[submodule "src/cutest"]
+	path = src/cutest
+	url = https://github.com/rafael-santiago/cutest

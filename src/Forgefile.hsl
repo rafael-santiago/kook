@@ -26,7 +26,7 @@ kook-test.preloading() {
 
 project kook-test : toolset $toolset_name : "main.c", $includes, $cflags, $libraries, $ldflags, "kook-test";
 
-krooked-test.prologue() {
+kook-test.prologue() {
     $includes.add_item(hefesto.sys.pwd());
     $includes.add_item(hefesto.sys.make_path(hefesto.sys.pwd(), hefesto.sys.os_name()));
 }
