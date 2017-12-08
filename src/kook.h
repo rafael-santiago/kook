@@ -8,20 +8,22 @@
 #ifndef KOOK_H
 #define KOOK_H 1
 
-#if defined(__linux__)
-#include <linux/get_syscall_table_addr.h>
-#include <linux/page_utils.h>
-#include <linux/kernel.h>
+# if defined(__linux__)
+#  include <linux/get_syscall_table_addr.h>
+#  include <linux/page_utils.h>
+#  include <linux/kernel.h>
 
-typedef unsigned long ** kook_syscall_table_t;
+   typedef unsigned long ** kook_syscall_table_t;
 
-#elif defined(__FreeBSD__)
-#include <freebsd/get_syscall_table_addr.h>
-#include <sys/sysent.h>
+# elif defined(__FreeBSD__)
+#  include <freebsd/get_syscall_table_addr.h>
+#  include <sys/sysent.h>
 
-typedef struct sysent * kook_syscall_table_t;
+   typedef struct sysent * kook_syscall_table_t;
 
-#endif
+# else
+#  error "Not supported platform."
+# endif
 
 int kook(const int syscall_nr, void *new_addr, void **old_addr);
 
