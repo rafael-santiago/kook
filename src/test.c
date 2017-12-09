@@ -13,6 +13,8 @@
 
 static void *original_mkdir = NULL;
 
+static int hook_callnr = 0;
+
 KUTE_DECLARE_TEST_CASE(kook_test_monkey);
 KUTE_DECLARE_TEST_CASE(hook_test);
 KUTE_DECLARE_TEST_CASE(unhook_test);
@@ -38,65 +40,35 @@ KUTE_MAIN(kook_test_monkey);
 #include <sys/sysproto.h>
 #include <sys/fcntl.h>
 
-static int create_file(void);
-
-static void close_file(const int fd);
-
-static int file_exists(void);
-
-static void remove_file(void);
-
 static int dummy_mkdir(struct thread *td, void *args);
 
 KUTE_TEST_CASE(hook_test)
+    struct mkdir_args args;
     KUTE_ASSERT(kook(SYS_mkdir, dummy_mkdir, &original_mkdir) == 0);
     KUTE_ASSERT(original_mkdir == (void *)sys_mkdir);
-    KUTE_ASSERT(kern_mkdirat(curthread, AT_FDCWD, KOOK_TEST_DIRNAME, UIO_SYSSPACE, 0644) == 0);
-    KUTE_ASSERT(file_exists() == 1);
-    remove_file();
-    KUTE_ASSERT(file_exists() == 0);
+    KUTE_ASSERT((sy_call_t *)dummy_mkdir == sysent[SYS_mkdir].sy_call);
+    // INFO(Rafael): Ascertaining it.
+    args.path = KOOK_TEST_DIRNAME;
+    args.mode = 0644;
+    KUTE_ASSERT(sysent[SYS_mkdir].sy_call(curthread, &args) == 0);
+    KUTE_ASSERT(hook_callnr == 1);
     KUTE_ASSERT(kern_rmdirat(curthread, AT_FDCWD, KOOK_TEST_DIRNAME, UIO_SYSSPACE) == 0);
 KUTE_TEST_CASE_END
 
 KUTE_TEST_CASE(unhook_test)
+    struct mkdir_args args;
     KUTE_ASSERT(kook(SYS_mkdir, original_mkdir, NULL) == 0);
-    KUTE_ASSERT(kern_mkdirat(curthread, AT_FDCWD, KOOK_TEST_DIRNAME, UIO_SYSSPACE, 0644) == 0);
-    KUTE_ASSERT(file_exists() == 0);
+    KUTE_ASSERT(original_mkdir == (void *)sysent[SYS_mkdir].sy_call);
+    // INFO(Rafael): Anyway, let's make sure.
+    args.path = KOOK_TEST_DIRNAME;
+    args.mode = 0644;
+    KUTE_ASSERT(sysent[SYS_mkdir].sy_call(curthread, &args) == 0);
+    KUTE_ASSERT(hook_callnr == 1);
     KUTE_ASSERT(kern_rmdirat(curthread, AT_FDCWD, KOOK_TEST_DIRNAME, UIO_SYSSPACE) == 0);
 KUTE_TEST_CASE_END
 
-static int create_file(void) {
-    int error;
-
-    error = kern_openat(curthread, AT_FDCWD, KOOK_TEST_FILE_PATH, UIO_SYSSPACE, O_WRONLY | O_CREAT | O_APPEND, 0644);
-
-    if (error == 0) {
-        return curthread->td_retval[0];
-    }
-
-    return -1;
-}
-
-static void close_file(const int fd) {
-    kern_close(curthread, fd);
-}
-
-static int file_exists(void) {
-    int exists = (kern_openat(curthread, AT_FDCWD, KOOK_TEST_FILE_PATH, UIO_SYSSPACE, O_RDONLY, 0644) == 0);
-
-    if (exists) {
-        kern_close(curthread, curthread->td_retval[0]);
-    }
-
-    return exists;
-}
-
-static void remove_file(void) {
-    kern_unlinkat(curthread, AT_FDCWD, KOOK_TEST_FILE_PATH, UIO_USERSPACE, 0);
-}
-
 static int dummy_mkdir(struct thread *td, void *args) {
-    close_file(create_file());
+    hook_callnr++;
     return sys_mkdir(td, args);
 }
 
