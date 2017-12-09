@@ -10,6 +10,31 @@
 
 #define KOOK_TEST_FILE_PATH "kook.paragaricutirimirruaru.test.txt"
 
+KUTE_DECLARE_TEST_CASE(kook_test_monkey);
+KUTE_DECLARE_TEST_CASE(hook_test);
+KUTE_DECLARE_TEST_CASE(unhook_test);
+KUTE_DECLARE_TEST_CASE(get_syscall_table_addr_test);
+
+KUTE_TEST_CASE(get_syscall_table_addr_test)
+    KUTE_ASSERT(get_syscall_table_addr() != NULL);
+KUTE_TEST_CASE_END
+
+KUTE_TEST_CASE(hook_test)
+    // TODO(Rafael): Guess what?
+KUTE_TEST_CASE_END
+
+KUTE_TEST_CASE(unhook_test)
+    // TODO(Rafael): Guess what?
+KUTE_TEST_CASE_END
+
+KUTE_TEST_CASE(kook_test_monkey)
+    KUTE_RUN_TEST(get_syscall_table_addr_test);
+    KUTE_RUN_TEST(hook_test);
+    KUTE_RUN_TEST(unhook_test);
+KUTE_TEST_CASE_END
+
+KUTE_MAIN(kook_test_monkey);
+
 #if defined(__FreeBSD__)
 
 #include <sys/proc.h>
@@ -21,6 +46,8 @@ static int create_file(void);
 static void close_file(const int fd);
 
 static int file_exists(void);
+
+static void remove_file(void);
 
 static int create_file(void) {
     int error;
@@ -48,28 +75,10 @@ static int file_exists(void) {
     return exists;
 }
 
-// TODO(Rafael): Remove the file.
+static void remove_file(void) {
+    kern_unlinkat(curthread, AT_FDCWD, KOOK_TEST_FILE_PATH, UIO_USERSPACE, 0);
+}
 
 #endif
 
-
-KUTE_DECLARE_TEST_CASE(kook_test_monkey);
-
-KUTE_DECLARE_TEST_CASE(hook_test);
-
-KUTE_DECLARE_TEST_CASE(unhook_test);
-
-KUTE_TEST_CASE(hook_test)
-    // TODO(Rafael): Guess what?
-KUTE_TEST_CASE_END
-
-KUTE_TEST_CASE(unhook_test)
-    // TODO(Rafael): Guess what?
-KUTE_TEST_CASE_END
-
-KUTE_TEST_CASE(kook_test_monkey)
-    KUTE_RUN_TEST(hook_test);
-    KUTE_RUN_TEST(unhook_test);
-KUTE_TEST_CASE_END
-
-KUTE_MAIN(kook_test_monkey);
+#undef KOOK_TEST_FILE_PATH
