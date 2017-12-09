@@ -103,3 +103,4 @@ static int dummy_mkdir(struct thread *td, void *args) {
 #endif
 
 #undef KOOK_TEST_FILE_PATH
+#undef KOOK_TEST_DIRNAME
