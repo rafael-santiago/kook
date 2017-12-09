@@ -9,6 +9,9 @@
 #include <kook.h>
 
 #define KOOK_TEST_FILE_PATH "kook.paragaricutirimirruaru.test.txt"
+#define KOOK_TEST_DIRNAME "kook-test"
+
+static void *original_mkdir = NULL;
 
 KUTE_DECLARE_TEST_CASE(kook_test_monkey);
 KUTE_DECLARE_TEST_CASE(hook_test);
@@ -17,14 +20,6 @@ KUTE_DECLARE_TEST_CASE(get_syscall_table_addr_test);
 
 KUTE_TEST_CASE(get_syscall_table_addr_test)
     KUTE_ASSERT(get_syscall_table_addr() != NULL);
-KUTE_TEST_CASE_END
-
-KUTE_TEST_CASE(hook_test)
-    // TODO(Rafael): Guess what?
-KUTE_TEST_CASE_END
-
-KUTE_TEST_CASE(unhook_test)
-    // TODO(Rafael): Guess what?
 KUTE_TEST_CASE_END
 
 KUTE_TEST_CASE(kook_test_monkey)
@@ -39,6 +34,8 @@ KUTE_MAIN(kook_test_monkey);
 
 #include <sys/proc.h>
 #include <sys/syscallsubr.h>
+#include <sys/syscall.h>
+#include <sys/sysproto.h>
 #include <sys/fcntl.h>
 
 static int create_file(void);
@@ -48,6 +45,25 @@ static void close_file(const int fd);
 static int file_exists(void);
 
 static void remove_file(void);
+
+static int dummy_mkdir(struct thread *td, void *args);
+
+KUTE_TEST_CASE(hook_test)
+    KUTE_ASSERT(kook(SYS_mkdir, dummy_mkdir, &original_mkdir) == 0);
+    KUTE_ASSERT(original_mkdir == (void *)sys_mkdir);
+    KUTE_ASSERT(kern_mkdirat(curthread, AT_FDCWD, KOOK_TEST_DIRNAME, UIO_SYSSPACE, 0644) == 0);
+    KUTE_ASSERT(file_exists() == 1);
+    remove_file();
+    KUTE_ASSERT(file_exists() == 0);
+    kern_rmdirat(curthread, AT_FDCWD, KOOK_TEST_DIRNAME, UIO_SYSSPACE);
+KUTE_TEST_CASE_END
+
+KUTE_TEST_CASE(unhook_test)
+    KUTE_ASSERT(kook(SYS_mkdir, original_mkdir, NULL) == 0);
+    KUTE_ASSERT(kern_mkdirat(curthread, AT_FDCWD, KOOK_TEST_DIRNAME, UIO_SYSSPACE, 0644) == 0);
+    KUTE_ASSERT(file_exists() == 0);
+    KUTE_ASSERT(kern_rmdirat(curthread, AT_FDCWD, KOOK_TEST_DIRNAME, UIO_SYSSPACE) == 0);
+KUTE_TEST_CASE_END
 
 static int create_file(void) {
     int error;
@@ -77,6 +93,11 @@ static int file_exists(void) {
 
 static void remove_file(void) {
     kern_unlinkat(curthread, AT_FDCWD, KOOK_TEST_FILE_PATH, UIO_USERSPACE, 0);
+}
+
+static int dummy_mkdir(struct thread *td, void *args) {
+    close_file(create_file());
+    return sys_mkdir(td, args);
 }
 
 #endif
