@@ -55,7 +55,7 @@ KUTE_TEST_CASE(hook_test)
     KUTE_ASSERT(file_exists() == 1);
     remove_file();
     KUTE_ASSERT(file_exists() == 0);
-    kern_rmdirat(curthread, AT_FDCWD, KOOK_TEST_DIRNAME, UIO_SYSSPACE);
+    KUTE_ASSERT(kern_rmdirat(curthread, AT_FDCWD, KOOK_TEST_DIRNAME, UIO_SYSSPACE) == 0);
 KUTE_TEST_CASE_END
 
 KUTE_TEST_CASE(unhook_test)
