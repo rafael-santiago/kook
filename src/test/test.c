@@ -5,7 +5,7 @@
  * the terms of the GNU General Public License version 2.
  *
  */
-#include <cutest/src/kutest.h>
+#include <test/cutest/src/kutest.h>
 #include <kook.h>
 
 static void *original_mkdir = NULL;
@@ -50,6 +50,30 @@ KUTE_TEST_CASE_END
 
 static int dummy_mkdir(struct thread *td, void *args) {
     return sys_mkdir(td, args);
+}
+
+#elif defined(__linux__)
+
+#include <linux/unistd.h>
+#include <linux/syscalls.h>
+
+asmlinkage long dummy_mkdir(const char __user *pathname, umode_t mode);
+
+KUTE_TEST_CASE(hook_test)
+    kook_syscall_table_t sy_table = get_syscall_table_addr();
+    KUTE_ASSERT(kook(__NR_mkdir, dummy_mkdir, &original_mkdir) == 0);
+    KUTE_ASSERT(original_mkdir == (void *)sys_mkdir);
+    KUTE_ASSERT((void *)dummy_mkdir == sy_table[__NR_mkdir]);
+KUTE_TEST_CASE_END
+
+KUTE_TEST_CASE(unkook_test)
+    kook_syscall_table_t sy_table = get_syscall_table_addr();
+    KUTE_ASSERT(kook(__NR_mkdir, original_mkdir, NULL) == 0);
+    KUTE_ASSERT(original_mkdir == sy_table[__NR_mkdir]);
+KUTE_TEST_CASE_END
+
+asmlinkage long dummy_mkdir(const char __user *pathname, umode_t mode) {
+    return sys_mkdir(pathname, mode);
 }
 
 #endif

@@ -29,4 +29,5 @@ project kook-test : toolset $toolset_name : "test.c", $includes, $cflags, $libra
 kook-test.prologue() {
     $includes.add_item(hefesto.sys.pwd());
     $includes.add_item(hefesto.sys.make_path(hefesto.sys.pwd(), hefesto.sys.os_name()));
+    $includes.add_item(hefesto.sys.make_path(hefesto.sys.pwd(), "test"));
 }
