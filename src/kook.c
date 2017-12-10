@@ -27,11 +27,11 @@ int kook(const int syscall_nr, void *new_addr, void **old_addr) {
         (*old_addr) = (void *) g_kook_syscall_table[syscall_nr];
     }
 
-    kook_set_page_rd_wr(**g_kook_syscall_table);
+    kook_disable_memory_protection();
 
     g_kook_syscall_table[syscall_nr] = new_addr;
 
-    kook_set_page_rd(**g_kook_syscall_table);
+    kook_enable_memory_protection();
 
 #elif defined(__FreeBSD__)
 
