@@ -55,18 +55,19 @@ static int dummy_mkdir(struct thread *td, void *args) {
 #elif defined(__linux__)
 
 #include <linux/unistd.h>
-#include <linux/syscalls.h>
 
 asmlinkage long dummy_mkdir(const char __user *pathname, umode_t mode);
+asmlinkage long (*sys_mkdir)(const char __user *pathname, umode_t mode);
 
 KUTE_TEST_CASE(hook_test)
     kook_syscall_table_t sy_table = get_syscall_table_addr();
+    sys_mkdir = (void *)sy_table[__NR_mkdir];
     KUTE_ASSERT(kook(__NR_mkdir, dummy_mkdir, &original_mkdir) == 0);
     KUTE_ASSERT(original_mkdir == (void *)sys_mkdir);
     KUTE_ASSERT((void *)dummy_mkdir == sy_table[__NR_mkdir]);
 KUTE_TEST_CASE_END
 
-KUTE_TEST_CASE(unkook_test)
+KUTE_TEST_CASE(unhook_test)
     kook_syscall_table_t sy_table = get_syscall_table_addr();
     KUTE_ASSERT(kook(__NR_mkdir, original_mkdir, NULL) == 0);
     KUTE_ASSERT(original_mkdir == sy_table[__NR_mkdir]);
