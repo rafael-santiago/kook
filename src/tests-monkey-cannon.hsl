@@ -1,0 +1,53 @@
+#
+#                                Copyright (C) 2017 by Rafael Santiago
+#
+# This is a free software. You can redistribute it and/or modify under
+# the terms of the GNU General Public License version 2.
+#
+#
+
+function kBoOm(modpath type string) : result type int {
+    var error type int;
+
+    $error = ldlkm($modpath);
+
+    if ($error == 0) {
+        if (uldlkm($modpath) != 0) {
+            hefesto.sys.echo("TEST PANIC: Maybe you must restart the machine because the test LKM cannot be removed.\n");
+        }
+    }
+
+    result $error;
+}
+
+local function ldlkm(modpath type string) : result type int {
+    var error type int;
+
+    $error = 1;
+
+    if (hefesto.sys.os_name() == "freebsd") {
+        if ($modpath.match("^\\./") == 0) {
+            $modpath = "./" + $modpath;
+        }
+        $error = hefesto.sys.run("kldload " + $modpath);
+    } else if (hefesto.sys.os_name() == "linux") {
+        hefesto.sys.run("dmesg -n4");
+        $error = hefesto.sys.run("insmod " + $modpath);
+    }
+
+    result $error;
+}
+
+local function uldlkm(modpath type string) : result type int {
+    var error type int;
+
+    $error = 1;
+
+    if (hefesto.sys.os_name() == "freebsd") {
+        $error = hefesto.sys.run("kldunload " + $modpath);
+    } else if (hefesto.sys.os_name() == "linux") {
+        $error = hefesto.sys.run("rmmod " + $modpath);
+    }
+
+    result $error;
+}

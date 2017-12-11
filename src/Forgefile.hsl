@@ -8,6 +8,7 @@
 
 include on linux ~/toolsets/linux/linux-module.hsl
 include on freebsd ~/toolsets/freebsd/freebsd-module.hsl
+include tests-monkey-cannon.hsl
 
 local var includes type list;
 local var cflags type list;
@@ -30,4 +31,14 @@ kook-test.prologue() {
     $includes.add_item(hefesto.sys.pwd());
     $includes.add_item(hefesto.sys.make_path(hefesto.sys.pwd(), hefesto.sys.os_name()));
     $includes.add_item(hefesto.sys.make_path(hefesto.sys.pwd(), "test"));
+}
+
+kook-test.epilogue() {
+    if (hefesto.sys.last_forge_result() == 0) {
+        if (kBoOm("kook-test.ko") == 0) {
+            hefesto.sys.echo("BUILD INFO: All done.\n");
+        } else {
+            hefesto.sys.echo("~~~ BUILD ERROR: Test failure!\n");
+        }
+    }
 }
