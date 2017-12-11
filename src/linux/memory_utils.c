@@ -8,11 +8,11 @@
 #include <linux/memory_utils.h>
 #include <linux/module.h>
 
-void kook_disable_memory_protection(void) {
-    write_cr0(read_cr0() & 0x00010000);
+void kook_enable_memory_protection(void) {
+    write_cr0(read_cr0() | 0x00010000);
 }
 
-void kook_enable_memory_protection(void) {
+void kook_disable_memory_protection(void) {
     write_cr0(read_cr0() & 0xFFFEFFFF);
 }
 
