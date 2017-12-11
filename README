@@ -4,8 +4,7 @@ Kook
 What is this?
 -------------
 
-Kook is just a simple code for system call hooking. It works in FreeBSD and Linux, by the way, the two platforms
-where I really love deal with kernel mode stuff.
+Kook is just a simple code for system call hooking. It works in FreeBSD and Linux, by the way, the two platforms where I really love deal with kernel mode stuff.
 
 How can I clone it?
 -------------------
@@ -54,7 +53,7 @@ Now you enter into kook's src sub-directory and call hefesto from there:
     you@somewhere/over/the/rainbow:~/src# cd kook/src
     you@somewhere/over/the/rainbow:~/src/kook/src# hefesto
 
-Some tests will ran and you will get an output like the following (when all is ok...):
+Some tests will run and you will get an output like the following (when all is ok...):
 
     *** kook_test_monkey loaded...
     -- running get_syscall_table_addr_test...
@@ -71,24 +70,24 @@ Some tests will ran and you will get an output like the following (when all is o
 How can I use this hooking stuff with my own kernel mode stuff?
 ---------------------------------------------------------------
 
-I have done this repo taking in consideration the FreeBSD and Linux kernel programmers, so the best way of using
-this code with your own stuff is by including the kook's src sub-directory and the kook's platform dependent code
-directory (by the way, named with your current platform name).
+I have done this repo taking in consideration the FreeBSD and Linux kernel programmers, so the best way of using this code with your own stuff is by including the kook's src sub-directory and the kook's platform dependent code directory (by the way, named with your current platform name).
 
-Hooking with kook is a thing that can be done even by a earthworm, look:
+Hooking with kook is a thing that can be done even by an earthworm, look:
 
     // Your precious code stuff...
     #include <kook.h> // Include the main kook's header file.
 
+    void *original_syscall = NULL;
+
     (...)
     // Hooking.
-    if (kook(sys_call_constant, your_hook_function, &original_hook_function) != 0) {
+    if (kook(sys_call_constant, your_hook_function, &original_syscall) != 0) {
         // Some error has occurred during the syscall hook.
     }
 
     (...)
     // Unhooking.
-    if (kook(sys_call_constant, original_hook_function, NULL) != 0) {
+    if (kook(sys_call_constant, original_syscall, NULL) != 0) {
         // Some error has occurred during the syscall unhooking and I think (just think...) you should not unload this module.
     }
 
@@ -99,5 +98,4 @@ If you have no intentions of unhooking, when hooking you can pass the original f
         // Some error has occurred during the syscall hook.
     }
 
-In Linux I have tested and designed it for 4.4.x kernels or (maybe) higher versions. However is easy to make it
-usable in older versions.
+In Linux I have tested and designed it for 4.4.x kernels or (maybe) higher versions. However is easy to make it usable in older versions.
