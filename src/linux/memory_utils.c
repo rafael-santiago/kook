@@ -9,10 +9,11 @@
 #include <linux/module.h>
 
 void kook_enable_memory_protection(void) {
+    // TODO(Rafael): Maybe use inline assembly to make it less version dependent.
     write_cr0(read_cr0() | 0x00010000);
 }
 
 void kook_disable_memory_protection(void) {
+    // TODO(Rafael): Maybe use inline assembly to make it less version dependent.
     write_cr0(read_cr0() & 0xFFFEFFFF);
 }
-
