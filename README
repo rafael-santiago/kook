@@ -1,0 +1,103 @@
+Kook
+----
+
+What is this?
+-------------
+
+Kook is just a simple code for system call hooking. It works in FreeBSD and Linux, by the way, the two platforms
+where I really love deal with kernel mode stuff.
+
+How can I clone it?
+-------------------
+
+Pretty simple:
+
+    you@somewhere/over/the/rainbow:~/src# git clone https://github.com/rafael-santiago/kook
+    you@somewhere/over/the/rainbow:~/src# cd kook
+    you@somewhere/over/the/rainbow:~/src/kook# git submodule update --init
+
+or by doing all at once:
+
+    you@somewhere/over/the/rainbow:~/src# git clone https://github.com/rafael-santiago/kook --recursive
+
+How can I build it?
+-------------------
+
+You should not "build" anything, however if you want to run the kook test's you need my build system
+(https://github.com/rafael-santiago/hefesto).
+
+Once this build system well installed, all you should do is to clone another repo of mine called helios
+(https://github.com/rafael-santiago/helios):
+
+    you@somewhere/over/the/rainbow:~/src# git clone https://github.com/rafael-santiago/helios
+
+
+After clonning it...
+
+#if defined(__FreeBSD__)
+
+    you@somewhere/over/the/rainbow:~/src# cd helios
+    you@somewhere/over/the/rainbow:~/src/helios# hefesto --install=freebsd-module-toolset
+
+#elif defined(__linux__)
+
+    you@somewhere/over/the/rainbow:~/src# cd helios
+    you@somewhere/over/the/rainbow:~/src/helios# hefesto --install=lnx-module-toolset
+
+#endif
+
+    you@somewhere/over/the/rainbow:~/src/helios# cd ..
+    you@somewhere/over/the/rainbow:~/src# rm -rf helios
+
+Now you enter into kook's src sub-directory and call hefesto from there:
+
+    you@somewhere/over/the/rainbow:~/src# cd kook/src
+    you@somewhere/over/the/rainbow:~/src/kook/src# hefesto
+
+Some tests will ran and you will get an output like the following (when all is ok...):
+
+    *** kook_test_monkey loaded...
+    -- running get_syscall_table_addr_test...
+    -- passed.
+    -- running hook_test...
+    -- passed.
+    -- running unhook_test...
+    -- passed.
+    *** all tests passed. [3 test(s) ran]
+    *** kook_test_monkey unloaded.
+    BUILD INFO: All done.
+
+
+How can I use this hooking stuff with my own kernel mode stuff?
+---------------------------------------------------------------
+
+I have done this repo taking in consideration the FreeBSD and Linux kernel programmers, so the best way of using
+this code with your own stuff is by including the kook's src sub-directory and the kook's platform dependent code
+directory (by the way, named with your current platform name).
+
+Hooking with kook is a thing that can be done even by a earthworm, look:
+
+    // Your precious code stuff...
+    #include <kook.h> // Include the main kook's header file.
+
+    (...)
+    // Hooking.
+    if (kook(sys_call_constant, your_hook_function, &original_hook_function) != 0) {
+        // Some error has occurred during the syscall hook.
+    }
+
+    (...)
+    // Unhooking.
+    if (kook(sys_call_constant, original_hook_function, NULL) != 0) {
+        // Some error has occurred during the syscall unhooking and I think (just think...) you should not unload this module.
+    }
+
+
+If you have no intentions of unhooking, when hooking you can pass the original function pointer as NULL:
+
+    if (hook(sys_call_constant, your_hook_function, NULL) != 0) {
+        // Some error has occurred during the syscall hook.
+    }
+
+In Linux I have tested and designed it for 4.4.x kernels or (maybe) higher versions. However is easy to make it
+usable in older versions.
