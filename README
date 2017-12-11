@@ -88,7 +88,8 @@ Hooking with kook is a thing that can be done even by an earthworm, look:
     (...)
     // Unhooking.
     if (kook(sys_call_constant, original_syscall, NULL) != 0) {
-        // Some error has occurred during the syscall unhooking and I think (just think...) you should not unload this module.
+        // Some error has occurred during the syscall unhooking and I think (just think...)
+        // you should not unload this module.
     }
 
 
