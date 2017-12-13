@@ -8,14 +8,14 @@
 #include <linux/memory_utils.h>
 
 // INFO(Rafael): If you want to use read/write_cr0 functions define the following macro.
-#undef KOOK_HAS_NATIVE_RW_CR0
+#undef KOOK_HAS_NATIVE_LNX_RW_CR0
 
-#if defined(KOOK_HAS_NATIVE_RW_CR0)
+#if defined(KOOK_HAS_NATIVE_LNX_RW_CR0)
 # include <linux/module.h>
 #endif
 
 void kook_enable_memory_protection(void) {
-#if !defined(KOOK_HAS_NATIVE_RW_CR0)
+#if !defined(KOOK_HAS_NATIVE_LNX_RW_CR0)
 # if defined(__i386__)
     __asm__ __volatile__ ("cli\n\t"
                           "mov %%cr0, %%eax\n\t"
@@ -29,7 +29,7 @@ void kook_enable_memory_protection(void) {
                           "mov %%rax, %%cr0\n\t"
                           "sti" :);
 # else
-#  error "You must define KOOK_HAS_NATIVE_RW_CR0 macro."
+#  error "You must define KOOK_HAS_NATIVE_LNX_RW_CR0 macro."
 # endif
 #else
     write_cr0(read_cr0() | 0x00010000);
@@ -37,7 +37,7 @@ void kook_enable_memory_protection(void) {
 }
 
 void kook_disable_memory_protection(void) {
-#if !defined(KOOK_HAS_NATIVE_RW_CR0)
+#if !defined(KOOK_HAS_NATIVE_LNX_RW_CR0)
 # if defined(__i386__)
     __asm__ __volatile__ ("cli\n\t"
                           "mov %%cr0, %%eax\n\t"
@@ -51,7 +51,7 @@ void kook_disable_memory_protection(void) {
                           "mov %%rax, %%cr0\n\t"
                           "sti" :);
 # else
-#  error "You must define KOOK_HAS_NATIVE_RW_CR0 macro."
+#  error "You must define KOOK_HAS_NATIVE_LNX_RW_CR0 macro."
 # endif
 #else
     write_cr0(read_cr0() & 0xFFFEFFFF);
