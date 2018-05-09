@@ -28,8 +28,8 @@ kook-test.preloading() {
     }
 }
 
-project kook-test : toolset $toolset_name : "test.c", $includes, 
-$cflags, $libraries, $ldflags, "kook_test_monkey";
+project kook-test : toolset $toolset_name : "test.c", $includes,
+                                                $cflags, $libraries, $ldflags, "kook_test_monkey";
 
 kook-test.prologue() {
     $includes.add_item(hefesto.sys.pwd());
