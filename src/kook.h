@@ -20,10 +20,13 @@
 #  include <sys/sysent.h>
 
    typedef struct sysent * kook_syscall_table_t;
+
 # elif defined(__NetBSD__)
 #  include <netbsd/get_syscall_table_addr.h>
 #  include <sys/systm.h>
+
    typedef struct sysent * kook_syscall_table_t;
+
 # else
 #  error "Not supported platform."
 # endif
