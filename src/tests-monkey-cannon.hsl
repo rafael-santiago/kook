@@ -29,10 +29,15 @@ local function ldlkm(modpath type string) : result type int {
         if ($modpath.match("^\\./") == 0) {
             $modpath = "./" + $modpath;
         }
-        $error = hefesto.sys.run("kldload " + $modpath);
+        $error = hefesto.sys.run("kldload " + $modpath + ".ko");
     } else if (hefesto.sys.os_name() == "linux") {
         hefesto.sys.run("dmesg -n4");
-        $error = hefesto.sys.run("insmod " + $modpath);
+        $error = hefesto.sys.run("insmod " + $modpath + ".ko");
+    } else if (hefesto.sys.os_name() == "netbsd") {
+        if ($modpath.match("^\\.//") == 0) {
+            $modpath = "./" + $modpath;
+	}
+        $error = hefesto.sys.run("modload " + $modpath + ".kmod");
     }
 
     result $error;
@@ -44,9 +49,11 @@ local function uldlkm(modpath type string) : result type int {
     $error = 1;
 
     if (hefesto.sys.os_name() == "freebsd") {
-        $error = hefesto.sys.run("kldunload " + $modpath);
+        $error = hefesto.sys.run("kldunload " + $modpath + ".ko");
     } else if (hefesto.sys.os_name() == "linux") {
-        $error = hefesto.sys.run("rmmod " + $modpath);
+        $error = hefesto.sys.run("rmmod " + $modpath + ".ko");
+    } else if (hefesto.sys.os_name() == "netbsd") {
+        $error = hefesto.sys.run("modunload " + $modpath);
     }
 
     result $error;

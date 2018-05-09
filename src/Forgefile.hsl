@@ -8,6 +8,7 @@
 
 include on linux ~/toolsets/linux/linux-module.hsl
 include on freebsd ~/toolsets/freebsd/freebsd-module.hsl
+include on netbsd ~/toolsets/netbsd/netbsd-module.hsl
 include tests-monkey-cannon.hsl
 
 local var includes type list;
@@ -22,10 +23,13 @@ kook-test.preloading() {
         $toolset_name = "linux-lkm";
     } else if (hefesto.sys.os_name() == "freebsd") {
         $toolset_name = "freebsd-kld";
+    } else if (hefesto.sys.os_name() == "netbsd") {
+        $toolset_name = "netbsd-module";
     }
 }
 
-project kook-test : toolset $toolset_name : "test.c", $includes, $cflags, $libraries, $ldflags, "kook-test";
+project kook-test : toolset $toolset_name : "test.c", $includes, 
+$cflags, $libraries, $ldflags, "kook_test_monkey";
 
 kook-test.prologue() {
     $includes.add_item(hefesto.sys.pwd());
@@ -35,7 +39,7 @@ kook-test.prologue() {
 
 kook-test.epilogue() {
     if (hefesto.sys.last_forge_result() == 0) {
-        if (kBoOm("kook-test.ko") == 0) {
+        if (kBoOm("kook_test_monkey") == 0) {
             hefesto.sys.echo("BUILD INFO: All done.\n");
         } else {
             hefesto.sys.echo("~~~ BUILD ERROR: Test failure!\n");

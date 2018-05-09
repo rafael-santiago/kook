@@ -77,4 +77,30 @@ asmlinkage long dummy_mkdir(const char __user *pathname, umode_t mode) {
     return sys_mkdir(pathname, mode);
 }
 
+#elif defined(__NetBSD__)
+
+#include <sys/cdefs.h>
+#include <sys/systm.h>
+#include <sys/syscall.h>
+#include <sys/syscallargs.h>
+
+static int dummy_mkdir(struct lwp *, const struct sys_mkdir_args *, 
+register_t *);
+
+KUTE_TEST_CASE(hook_test)
+   KUTE_ASSERT(kook(SYS_mkdir, dummy_mkdir, &original_mkdir) == 0);
+   KUTE_ASSERT(original_mkdir == (void *)sys_mkdir);
+   KUTE_ASSERT((sy_call_t *)dummy_mkdir == sysent[SYS_mkdir].sy_call);
+KUTE_TEST_CASE_END
+
+KUTE_TEST_CASE(unhook_test)
+   KUTE_ASSERT(kook(SYS_mkdir, original_mkdir, NULL) == 0);
+   KUTE_ASSERT(original_mkdir == (void *)sysent[SYS_mkdir].sy_call);
+KUTE_TEST_CASE_END
+
+static int dummy_mkdir(struct lwp *lp, const struct sys_mkdir_args *ap, 
+register_t *rp) {
+   return sys_mkdir(lp, ap, rp);
+}
+
 #endif

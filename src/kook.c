@@ -33,7 +33,7 @@ int kook(const int syscall_nr, void *new_addr, void **old_addr) {
 
     kook_enable_memory_protection();
 
-#elif defined(__FreeBSD__)
+#elif defined(__FreeBSD__) || defined(__NetBSD__)
 
     if (old_addr != NULL) {
         *old_addr = (void *) g_kook_syscall_table[syscall_nr].sy_call;
