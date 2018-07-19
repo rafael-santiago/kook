@@ -32,6 +32,15 @@ project kook-test : toolset $toolset_name : "test.c", $includes,
                                                 $cflags, $libraries, $ldflags, "kook_test_monkey";
 
 kook-test.prologue() {
+    var option type list;
+
+    $option = hefesto.sys.get_option("build-skip");
+
+    if ($option.index_of("kook") > -1) {
+        hefesto.sys.echo("BUILD INFO: kook build was skipped.\n");
+        hefesto.project.abort(0);
+    }
+
     $includes.add_item(hefesto.sys.pwd());
     $includes.add_item(hefesto.sys.make_path(hefesto.sys.pwd(), hefesto.sys.os_name()));
     $includes.add_item(hefesto.sys.make_path(hefesto.sys.pwd(), "test"));
