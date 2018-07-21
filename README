@@ -75,7 +75,9 @@ Some tests will run and you will get an output like the following (when all is o
 How can I use this hooking stuff with my own kernel mode stuff?
 ---------------------------------------------------------------
 
-I have done this repo taking in consideration the FreeBSD, NetBSD and Linux kernel programmers, so the best way of using this code with your own stuff is by including the kook's src sub-directory and the kook's platform dependent code directory (by the way, named with your current platform name).
+I have done this repo taking in consideration the FreeBSD, NetBSD and Linux kernel programmers, so the best way of using 
+this code with your own stuff is by including the kook's src sub-directory and the kook's platform dependent code 
+directory (by the way, named with your current platform name).
 
 Hooking with kook is a thing that can be done even by an earthworm, look:
 
@@ -104,4 +106,5 @@ If you have no intentions of unhooking, when hooking you can pass the original f
         // Some error has occurred during the syscall hook.
     }
 
-In Linux I have tested and designed it for 4.4.x kernels or (maybe) higher versions. However is easy to make it usable in older versions.
+In Linux I have tested and designed it for 4.4.x kernels or (maybe) higher versions. However is easy to make it usable in 
+older versions.
