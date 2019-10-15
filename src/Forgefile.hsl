@@ -9,7 +9,7 @@
 include on linux ~/toolsets/linux/linux-module.hsl
 include on freebsd ~/toolsets/freebsd/freebsd-module.hsl
 include on netbsd ~/toolsets/netbsd/netbsd-module.hsl
-include on windows,openbsd ~/toolsets/null/null.hsl
+include on windows,openbsd,minix ~/toolsets/null/null.hsl
 include tests-monkey-cannon.hsl
 
 local var includes type list;
