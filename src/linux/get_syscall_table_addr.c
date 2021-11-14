@@ -13,7 +13,7 @@
 
 #if !HAS_KALLSYMS_LOOKUP_NAME_EXPORT
 # include <linux/kprobes.h>
-static unsigned long (*kallsyms_ln)(const char *);
+static unsigned long (*kallsyms_ln)(const char *) = NULL;
 #endif
 
 #define GET_SYSCALL_TABLE_NAME "sys_call_table"
