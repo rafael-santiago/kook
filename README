@@ -4,7 +4,7 @@ Kook
 What is this?
 -------------
 
-Kook is just a simple code for system call hooking. It works in FreeBSD, NetBSD and also Linux.
+Kook is just a simple code for system call hooking. It works on FreeBSD, NetBSD and also Linux.
 
 How can I clone it?
 -------------------
@@ -101,9 +101,9 @@ Hooking with kook is a thing that can be done even by an earthworm, look:
 
 If you have no intentions of unhooking, when hooking you can pass the original function pointer as NULL:
 
-    if (hook(sys_call_constant, your_hook_function, NULL) != 0) {
+    if (kook(sys_call_constant, your_hook_function, NULL) != 0) {
         // Some error has occurred during the syscall hook.
     }
 
-In Linux I have tested and designed it for 4.4.x kernels or (maybe) higher versions. Until now it is currently
+On Linux I have tested and designed it for 4.4.x kernels or (maybe) higher versions. Until now it is currently
 supporting kernels higher than 5.7.0, too. However is easy to make it usable in older versions.
