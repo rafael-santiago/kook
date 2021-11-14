@@ -34,8 +34,9 @@ void *get_syscall_table_addr(void) {
         kallsyms_ln = (void *) kp_ctx.addr;
         unregister_kprobe(&kp_ctx);
     }
-    return (kallsyms_ln != NULL) ? kallsyms_ln(GET_SYSCALL_TABLE_NAME) : NULL;
+    return (kallsyms_ln != NULL) ? (void *)kallsyms_ln(GET_SYSCALL_TABLE_NAME) : NULL;
 }
 #endif
 
+#undef HAS_KALLSYMS_LOOKUP_NAME_EXPORT
 #undef GET_SYSCALL_TABLE_NAME
